@@ -15,7 +15,7 @@
 			"src/migrations"
 		],
 		"psr-4": {
-			"Swisnl\\WebbeheerTranslation\\": "src/"
+			"Swisnl\\WebbeheerTranslation": "src/"
 		}
 	},
 	"minimum-stability": "stable"
