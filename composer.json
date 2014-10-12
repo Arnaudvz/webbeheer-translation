@@ -1,0 +1,22 @@
+{
+    "name": "swisnl/webbeheer-translation",
+    "description": "",
+    "authors": [
+        {
+            "name": "Jeroen van der Geer",
+            "email": "jeroen@swis.nl"
+        }
+    ],
+	"require": {
+		"php": ">=5.4.0"
+	},
+	"autoload": {
+		"classmap": [
+			"src/migrations"
+		],
+		"psr-4": {
+			"Swisnl\\WebbeheerTranslation\\": "src/"
+		}
+	},
+	"minimum-stability": "stable"
+}
