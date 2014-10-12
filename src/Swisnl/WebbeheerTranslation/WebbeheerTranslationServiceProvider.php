@@ -14,7 +14,7 @@ class WebbeheerTranslationServiceProvider extends \Illuminate\Translation\Transl
 
     public function boot()
     {
-        $this->package('swisnl/webbeheer-translation');
+
     }
 
     /**
@@ -24,6 +24,8 @@ class WebbeheerTranslationServiceProvider extends \Illuminate\Translation\Transl
      */
     public function register()
     {
+        $this->package('swisnl/webbeheer-translation');
+
         $this->registerLoader();
         $this->registerDatabaseLoader();
 
@@ -53,14 +55,13 @@ class WebbeheerTranslationServiceProvider extends \Illuminate\Translation\Transl
      */
     protected function registerDatabaseLoader()
     {
-
         $this->app->bindShared(
             'translation.loader.database',
             function ($app) {
                 return new DatabaseLoader(
                     $app['db'],
-                    $app['config']['swisnl/webbeheer-translation::tables.groups'],
-                    $app['config']['swisnl/webbeheer-translation::tables.translations']
+                    $app['config']['webbeheer-translation::tables.groups'],
+                    $app['config']['webbeheer-translation::tables.translations']
                 );
             }
         );
