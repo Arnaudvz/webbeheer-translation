@@ -11,9 +11,9 @@ webbeheer-translation
 			"url":  "git@github.com:swisnl/webbeheer-translation.git"
 		}
 		
-		"require": [
+		"require": {
 		  "swisnl/webbeheer-translation": "dev-master"
-		]
+		}
 		
 ```
 
