@@ -31,14 +31,12 @@ class DatabaseLoader implements LoaderInterface
 
     /**
      * @param DatabaseManager $db
-     * @param string          $groups
-     * @param string          $translations
+     * @param string          $schema Schema defined in the configuration
      */
-    public function __construct(DatabaseManager $db, $groups, $translations)
+    public function __construct(DatabaseManager $db, $schema)
     {
         $this->db           = $db->connection();
-        $this->groups       = $groups;
-        $this->translations = $translations;
+        $this->schema       = $schema;
     }
 
     /**
@@ -51,11 +49,11 @@ class DatabaseLoader implements LoaderInterface
      */
     public function load($locale, $group, $namespace = null)
     {
-        $query = $this->db->table($this->translations)
-            ->where('lang', $locale)
-            ->where('group', $group);
+        $query = $this->db->table($this->schema['table'])
+            ->where($this->schema['fields']['locale'], $locale)
+            ->where($this->schema['fields']['group'], $group);
 
-        return $query->lists('value', 'key');
+        return $query->lists($this->schema['fields']['content'], $this->schema['fields']['label']);
     }
 
     /**

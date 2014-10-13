@@ -21,13 +21,13 @@ class CreateTranslationsTable extends Migration {
             $table->integer('groep');
             $table->index(['gebruiker', 'groep']);
 
-            $table->string('lang', 2);
+            $table->string('locale', 2);
             $table->string('group');
-            $table->string('key');
-            $table->string('value');
+            $table->string('label');
+            $table->string('content');
 
 			$table->timestamps();
-            $table->index(['lang', 'group']);
+            $table->index(['locale', 'group']);
 		});
 	}
 

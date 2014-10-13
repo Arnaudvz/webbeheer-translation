@@ -60,8 +60,7 @@ class WebbeheerTranslationServiceProvider extends \Illuminate\Translation\Transl
             function ($app) {
                 return new DatabaseLoader(
                     $app['db'],
-                    $app['config']['webbeheer-translation::tables.groups'],
-                    $app['config']['webbeheer-translation::tables.translations']
+                    $app['config']['webbeheer-translation::schema']
                 );
             }
         );

@@ -1,12 +1,16 @@
 <?php
 
 return [
-
     /**
-     * Specify the table used by the translator
+     * Specify the schema used by the translator
      */
-    'tables' => [
-        'translations'  => 'translations',
+    'schema' => [
+        'table'  => 'translations',
+        'fields' => [
+            'locale'  => 'locale',
+            'group'   => 'group',
+            'label'   => 'label',
+            'content' => 'content',
+        ]
     ]
-
 ];
