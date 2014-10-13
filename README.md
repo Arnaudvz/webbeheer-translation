@@ -3,6 +3,7 @@ webbeheer-translation
 
 ### Installation
 
+Add repository
 
 ```javascript
   	"repositories": [
@@ -10,11 +11,16 @@ webbeheer-translation
 			"type": "vcs",
 			"url":  "git@github.com:swisnl/webbeheer-translation.git"
 		}
+	]
 		
-		"require": {
-		  "swisnl/webbeheer-translation": "dev-master"
-		}
-		
+```
+
+Add dependency
+
+```javscript
+	"require": {
+	  "swisnl/webbeheer-translation": "dev-master"
+	}
 ```
 
 ### Configuration
