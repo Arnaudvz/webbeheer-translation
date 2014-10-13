@@ -25,7 +25,7 @@ Add dependency
 
 ### Configuration
 
-Publish the config & migration and edit as necessary.
+Publish the config & migrations. You can change the table schema by editing the published migration & configuration file.
 
 ```bash
 	php artisan publish:config swisnl/webbeheer-translation
