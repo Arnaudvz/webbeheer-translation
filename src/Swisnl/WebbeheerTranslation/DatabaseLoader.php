@@ -53,7 +53,7 @@ class DatabaseLoader implements LoaderInterface
             ->where($this->schema['fields']['locale'], $locale)
             ->where($this->schema['fields']['group'], $group);
 
-        return $query->lists($this->schema['fields']['content'], $this->schema['fields']['label']);
+        return $query->lists($this->schema['fields']['content'], $this->schema['fields']['item']);
     }
 
     /**
