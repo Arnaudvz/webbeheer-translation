@@ -22,12 +22,12 @@ class CreateTranslationsTable extends Migration {
             $table->index(['gebruiker', 'groep']);
 
             $table->string('locale', 2);
-            $table->string('group');
-            $table->string('label');
+            $table->string('group_name');
+            $table->string('item');
             $table->string('content');
 
 			$table->timestamps();
-            $table->index(['locale', 'group']);
+            $table->index(['locale', 'group_name']);
 		});
 	}
 
