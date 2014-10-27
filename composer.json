@@ -1,5 +1,5 @@
 {
-    "name": "swisnl/webbeheer-translation",
+    "name": "arnaudvz/webbeheer-translation",
     "description": "",
     "authors": [
         {
@@ -13,7 +13,7 @@
 	},
 	"autoload": {
 		"psr-0": {
-			"Swisnl\\WebbeheerTranslation": "src/"
+			"Arnaudvz\\WebbeheerTranslation": "src/"
 		}
 	},
 	"minimum-stability": "stable"
