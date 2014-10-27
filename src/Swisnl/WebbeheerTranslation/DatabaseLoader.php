@@ -35,7 +35,7 @@ class DatabaseLoader implements LoaderInterface
      */
     public function __construct(DatabaseManager $db, $schema)
     {
-        $this->db           = $db->connection();
+		$this->db           = $db->connection();
         $this->schema       = $schema;
     }
 
@@ -51,7 +51,8 @@ class DatabaseLoader implements LoaderInterface
     {
         $query = $this->db->table($this->schema['table'])
             ->where($this->schema['fields']['locale'], $locale)
-            ->where($this->schema['fields']['group'], $group);
+            ->where($this->schema['fields']['group'], $group)
+			->where($this->schema['fields']['content'], '!=', "");
 
         return $query->lists($this->schema['fields']['content'], $this->schema['fields']['item']);
     }

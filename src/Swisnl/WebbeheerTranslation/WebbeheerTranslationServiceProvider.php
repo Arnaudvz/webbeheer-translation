@@ -28,19 +28,21 @@ class WebbeheerTranslationServiceProvider extends \Illuminate\Translation\Transl
 
         $this->registerLoader();
         $this->registerDatabaseLoader();
+        $this->registerDatabaseSaver();
 
         $this->app->bindShared(
             'translator',
             function ($app) {
                 $fileLoader = $app['translation.loader'];
                 $databaseLoader = $app['translation.loader.database'];
+				$databaseSaver = $app['translation.saver'];
 
                 // When registering the translator component, we'll need to set the default
                 // locale as well as the fallback locale. So, we'll grab the application
                 // configuration so we can easily get both of these values from there.
                 $locale = $app['config']['app.locale'];
 
-                $trans = new WebbeheerTranslator($databaseLoader, $fileLoader, $locale);
+                $trans = new WebbeheerTranslator($databaseLoader, $fileLoader, $databaseSaver, $locale);
                 $trans->setFallback($app['config']['app.fallback_locale']);
 
                 return $trans;
@@ -66,6 +68,24 @@ class WebbeheerTranslationServiceProvider extends \Illuminate\Translation\Transl
         );
     }
 
+	/**
+	 * Register a database loader
+	 *
+	 * @return void
+	 */
+	protected function registerDatabaseSaver()
+	{
+		$this->app->bindShared(
+			'translation.saver',
+			function ($app) {
+				return new DatabaseSaver(
+					$app['db'],
+					$app['config']['webbeheer-translation::schema']
+				);
+			}
+		);
+	}
+
     /**
      * Get the services provided by the provider.
      *
@@ -73,6 +93,6 @@ class WebbeheerTranslationServiceProvider extends \Illuminate\Translation\Transl
      */
     public function provides()
     {
-        return array('translator', 'translation.loader', 'translation.loader.database');
+        return array('translator', 'translation.loader', 'translation.loader.database', 'translation.saver');
     }
 }

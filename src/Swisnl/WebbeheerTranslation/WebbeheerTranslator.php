@@ -31,10 +31,11 @@ class WebbeheerTranslator extends \Illuminate\Translation\Translator
      * @param LoaderInterface $fileLoader
      * @param                 $locale
      */
-    public function __construct(LoaderInterface $databaseLoader, LoaderInterface $fileLoader, $locale)
+    public function __construct(LoaderInterface $databaseLoader, LoaderInterface $fileLoader, DatabaseSaver $databaseSaver, $locale)
     {
         $this->fileLoader     = $fileLoader;
         $this->databaseLoader = $databaseLoader;
+        $this->databaseSaver  = $databaseSaver;
         $this->locale         = $locale;
     }
 
@@ -45,6 +46,14 @@ class WebbeheerTranslator extends \Illuminate\Translation\Translator
     {
         return $this->databaseLoader;
     }
+
+	/**
+	 * @return DatabaseSaver
+	 */
+	public function getDatabaseSaver()
+	{
+		return $this->databaseSaver;
+	}
 
     /**
      * @return mixed
@@ -158,15 +167,25 @@ class WebbeheerTranslator extends \Illuminate\Translation\Translator
      */
     protected function getLineFromDatabase(array $replace, $locale, $namespace, $group, $item)
     {
-        foreach ($this->parseLocale($locale) as $locale) {
+
+		foreach ($this->parseLocale($locale) as $locale) {
             $this->loadFromDatabase($namespace, $group, $locale);
             $line = $this->getLine($namespace, $group, $locale, $item, $replace);
 
-            if (!is_null($line)) {
+            if (!empty($line)) {
                 return $line;
             }
+
+			if (is_null($line)) {
+				$this->insertIntoDatabase($locale, $group, $item);
+			}
+
         }
     }
+
+	protected function insertIntoDatabase($locale, $group, $item) {
+		$this->getDatabaseSaver()->save($locale, $group, $item);
+	}
 
     /**
      * @param array $replace
