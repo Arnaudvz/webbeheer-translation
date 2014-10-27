@@ -24,7 +24,7 @@ class WebbeheerTranslationServiceProvider extends \Illuminate\Translation\Transl
      */
     public function register()
     {
-        $this->package('swisnl/webbeheer-translation');
+        $this->package('arnaudvz/webbeheer-translation');
 
         $this->registerLoader();
         $this->registerDatabaseLoader();
