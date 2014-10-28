@@ -18,6 +18,11 @@ class DatabaseSaver
 	 */
 	private $schema;
 
+	/**
+	 * @var bool
+	 */
+	static $enabled = true;
+
 
     /**
      * @param DatabaseManager $db
@@ -39,7 +44,8 @@ class DatabaseSaver
      */
     public function save($locale, $group, $item)
     {
-		if(\App::environment() == 'testing') {
+
+		if(!self::$enabled) {
 			return false;
 		}
 
@@ -53,4 +59,18 @@ class DatabaseSaver
 			return false;
 		}
     }
+
+	/**
+	 * disable the saver, probably for your testing purposes
+	 */
+	public static function disableSaver() {
+		self::$enabled = false;
+	}
+
+	/**
+	 * enable the saver, probably for your testing purposes
+	 */
+	public static function enableSaver() {
+		self::$enabled = true;
+	}
 }

@@ -26,6 +26,11 @@ class WebbeheerTranslator extends \Illuminate\Translation\Translator
      */
     protected $fileLoaded = [];
 
+	/**
+	 * @var array
+	 */
+	protected $fromDatabaseLoaded = [];
+
     /**
      * @param LoaderInterface $databaseLoader
      * @param LoaderInterface $fileLoader
@@ -108,7 +113,8 @@ class WebbeheerTranslator extends \Illuminate\Translation\Translator
      */
     public function setDatabaseLoaded($namespace, $group, $locale, $lines)
     {
-        $this->loaded[$namespace][$group][$locale]         = $lines;
+        $this->loaded[$namespace][$group][$locale] = $lines;
+		$this->fromDatabaseLoaded[$namespace][$group][$locale] = $lines;
         $this->databaseLoaded[$namespace][$group][$locale] = true;
     }
 
@@ -135,12 +141,13 @@ class WebbeheerTranslator extends \Illuminate\Translation\Translator
      */
     public function get($key, array $replace = array(), $locale = null)
     {
-        list($namespace, $group, $item) = $this->parseKey($key);
+		list($namespace, $group, $item) = $this->parseKey($key);
 
         // Here we will get the locale that should be used for the language line. If one
         // was not passed, we will use the default locales which was given to us when
         // the translator was instantiated. Then, we can load the lines and return.
         $line = $this->getLineFromDatabase($replace, $locale, $namespace, $group, $item);
+
 
         // If the line doesn't exist in the database we will use the fallback loader and add any missing keys
         if (!$line) {
@@ -172,19 +179,21 @@ class WebbeheerTranslator extends \Illuminate\Translation\Translator
             $this->loadFromDatabase($namespace, $group, $locale);
             $line = $this->getLine($namespace, $group, $locale, $item, $replace);
 
+			if(!isset($this->fromDatabaseLoaded[$namespace][$group][$locale][$item])) {
+				var_dump($namespace, $locale, $group, $item);
+				$this->insertIntoDatabase($namespace, $locale, $group, $item);
+			}
+
             if (!empty($line)) {
                 return $line;
             }
 
-			if (is_null($line)) {
-				$this->insertIntoDatabase($locale, $group, $item);
-			}
-
         }
     }
 
-	protected function insertIntoDatabase($locale, $group, $item) {
+	protected function insertIntoDatabase($namespace, $locale, $group, $item) {
 		$this->getDatabaseSaver()->save($locale, $group, $item);
+		$this->fromDatabaseLoaded[$namespace][$group][$locale][$item] = true;
 	}
 
     /**
