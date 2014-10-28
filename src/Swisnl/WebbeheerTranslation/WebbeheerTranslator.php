@@ -180,7 +180,6 @@ class WebbeheerTranslator extends \Illuminate\Translation\Translator
             $line = $this->getLine($namespace, $group, $locale, $item, $replace);
 
 			if(!isset($this->fromDatabaseLoaded[$namespace][$group][$locale][$item])) {
-				var_dump($namespace, $locale, $group, $item);
 				$this->insertIntoDatabase($namespace, $locale, $group, $item);
 			}
 
