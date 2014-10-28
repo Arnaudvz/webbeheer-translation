@@ -39,6 +39,10 @@ class DatabaseSaver
      */
     public function save($locale, $group, $item)
     {
+		if(\App::environment() == 'testing') {
+			return false;
+		}
+
 		try{
 			return $this->db->table($this->schema['table'])->insert([
 				$this->schema['fields']['locale'] => $locale,
