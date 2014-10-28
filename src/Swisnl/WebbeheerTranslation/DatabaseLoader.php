@@ -5,6 +5,7 @@ namespace Swisnl\WebbeheerTranslation;
 use Illuminate\Database\Connection;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\QueryException;
 use Illuminate\Translation\LoaderInterface;
 
 class DatabaseLoader implements LoaderInterface
@@ -49,12 +50,16 @@ class DatabaseLoader implements LoaderInterface
      */
     public function load($locale, $group, $namespace = null)
     {
-        $query = $this->db->table($this->schema['table'])
-            ->where($this->schema['fields']['locale'], $locale)
-            ->where($this->schema['fields']['group'], $group)
-			->where($this->schema['fields']['content'], '!=', "");
+        try {
+			$query = $this->db->table($this->schema['table'])
+				->where($this->schema['fields']['locale'], $locale)
+				->where($this->schema['fields']['group'], $group)
+				->where($this->schema['fields']['content'], '!=', "");
 
-        return $query->lists($this->schema['fields']['content'], $this->schema['fields']['item']);
+			return $query->lists($this->schema['fields']['content'], $this->schema['fields']['item']);
+		} catch(QueryException $e) {
+			return array();
+		}
     }
 
     /**
