@@ -26,10 +26,10 @@ class WebbeheerTranslator extends \Illuminate\Translation\Translator
      */
     protected $fileLoaded = [];
 
-	/**
-	 * @var array
-	 */
-	protected $fromDatabaseLoaded = [];
+    /**
+     * @var array
+     */
+    protected $fromDatabaseLoaded = [];
 
     /**
      * @param LoaderInterface $databaseLoader
@@ -52,13 +52,13 @@ class WebbeheerTranslator extends \Illuminate\Translation\Translator
         return $this->databaseLoader;
     }
 
-	/**
-	 * @return DatabaseSaver
-	 */
-	public function getDatabaseSaver()
-	{
-		return $this->databaseSaver;
-	}
+    /**
+     * @return DatabaseSaver
+     */
+    public function getDatabaseSaver()
+    {
+        return $this->databaseSaver;
+    }
 
     /**
      * @return mixed
@@ -114,7 +114,7 @@ class WebbeheerTranslator extends \Illuminate\Translation\Translator
     public function setDatabaseLoaded($namespace, $group, $locale, $lines)
     {
         $this->loaded[$namespace][$group][$locale] = $lines;
-		$this->fromDatabaseLoaded[$namespace][$group][$locale] = $lines;
+        $this->fromDatabaseLoaded[$namespace][$group][$locale] = $lines;
         $this->databaseLoaded[$namespace][$group][$locale] = true;
     }
 
@@ -141,27 +141,28 @@ class WebbeheerTranslator extends \Illuminate\Translation\Translator
      */
     public function get($key, array $replace = array(), $locale = null)
     {
-		list($namespace, $group, $item) = $this->parseKey($key);
+        list($namespace, $group, $item) = $this->parseKey($key);
 
         // Here we will get the locale that should be used for the language line. If one
         // was not passed, we will use the default locales which was given to us when
         // the translator was instantiated. Then, we can load the lines and return.
-        $line = $this->getLineFromDatabase($replace, $locale, $namespace, $group, $item);
+        foreach ($this->parseLocale($locale) as $locale) {
+            $line = $this->getLineFromDatabase($replace, $locale, $namespace, $group, $item);
 
+            // If the line doesn't exist in the database we will use the fallback loader and add any missing keys
+            if (!$line) {
+                $line = $this->getLineFromFallback($replace, $locale, $namespace, $group, $item);
+            }
 
-        // If the line doesn't exist in the database we will use the fallback loader and add any missing keys
-        if (!$line) {
-            $line = $this->getLineFromFallback($replace, $locale, $namespace, $group, $item);
+            // If the line doesn't exist, we will return back the key which was requested as
+            // that will be quick to spot in the UI if language keys are wrong or missing
+            // from the application's language files. Otherwise we can return the line.
+            if ($line) {
+                return $line;
+            }
         }
 
-        // If the line doesn't exist, we will return back the key which was requested as
-        // that will be quick to spot in the UI if language keys are wrong or missing
-        // from the application's language files. Otherwise we can return the line.
-        if (!isset($line)) {
-            return $key;
-        }
-
-        return $line;
+        return $key;
     }
 
     /**
@@ -174,26 +175,13 @@ class WebbeheerTranslator extends \Illuminate\Translation\Translator
      */
     protected function getLineFromDatabase(array $replace, $locale, $namespace, $group, $item)
     {
+        $this->loadFromDatabase($namespace, $group, $locale);
+        $line = $this->getLine($namespace, $group, $locale, $item, $replace);
 
-		foreach ($this->parseLocale($locale) as $locale) {
-            $this->loadFromDatabase($namespace, $group, $locale);
-            $line = $this->getLine($namespace, $group, $locale, $item, $replace);
-
-			if(!isset($this->fromDatabaseLoaded[$namespace][$group][$locale][$item])) {
-				$this->insertIntoDatabase($namespace, $locale, $group, $item);
-			}
-
-            if (!empty($line)) {
-                return $line;
-            }
-
+        if (!empty($line)) {
+            return $line;
         }
     }
-
-	protected function insertIntoDatabase($namespace, $locale, $group, $item) {
-		$this->getDatabaseSaver()->save($locale, $group, $item);
-		$this->fromDatabaseLoaded[$namespace][$group][$locale][$item] = true;
-	}
 
     /**
      * @param array $replace
@@ -205,13 +193,11 @@ class WebbeheerTranslator extends \Illuminate\Translation\Translator
      */
     protected function getLineFromFallback(array $replace, $locale, $namespace, $group, $item)
     {
-        foreach ($this->parseLocale($locale) as $locale) {
-            $this->loadFromFallback($namespace, $group, $locale);
-            $line = $this->getLine($namespace, $group, $locale, $item, $replace);
+        $this->loadFromFallback($namespace, $group, $locale);
+        $line = $this->getLine($namespace, $group, $locale, $item, $replace);
 
-            if (!is_null($line)) {
-                return $line;
-            }
+        if (!empty($line)) {
+            return $line;
         }
     }
 
